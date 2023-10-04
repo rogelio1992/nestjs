@@ -23,6 +23,4 @@ export class AppController {
     console.log(productID);
     return `This action returns a #${productID} product`;
   }
-
-
 }
