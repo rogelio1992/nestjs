@@ -1,18 +1,58 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { ProductService } from '../../services/product/product.service';
 
 @Controller('products')
 export class ProductsController {
+  constructor(private ProductService: ProductService) {}
   @Get()
-  getProducts(
+  getAll(
     @Query('limit') limit = 100,
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
   ) {
-    return `products limit=> ${limit} with offset ${offset} y marca ${brand}`;
+    return {
+      message: `Listado de Productos`,
+      body: this.ProductService.findAll(),
+    };
   }
   @Get('/:productID')
-  findOne(@Param('productID') productID: number) {
-    console.log(productID);
-    return `This action returns a #${productID} product`;
+  findOne(@Param('productID', ParseIntPipe) productID: number) {
+    return {
+      message: 'Su producto es',
+      body: this.ProductService.findOne(productID),
+    };
+  }
+  @Post()
+  create(@Body() payload: any): any {
+    return this.ProductService.create(payload);
+  }
+  @Put(':id')
+  update(@Param('id') id: number, @Body() payload: any): any {
+    const product = this.ProductService.update(+id, payload);
+    return {
+      message: `Se ha actualizado con exito el producto `,
+      body: {
+        product,
+      },
+    };
+  }
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  delete(@Param('id') id: number): any {
+    return {
+      message: `Se ha eliminado con exito el producto ${id}`,
+    };
   }
 }
