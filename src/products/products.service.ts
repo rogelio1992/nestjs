@@ -24,6 +24,7 @@ export class ProductsService {
     },
   ];
   private counterId: number = 3;
+
   create(createProductDto: CreateProductDto) {
     const newProduct = {
       id: this.counterId,
